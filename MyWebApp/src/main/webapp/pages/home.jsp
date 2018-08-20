@@ -7,8 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	I love Java.
-
+	Welcome  ${obj}, ${obj.aname}
 </body>
 </html>
 
