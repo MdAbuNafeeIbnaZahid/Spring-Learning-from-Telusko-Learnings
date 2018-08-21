@@ -1,5 +1,10 @@
 package com.telusko.demo.controller;
 
+import java.util.List;
+
+import javax.sound.midi.Soundbank;
+
+import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +34,20 @@ public class AlienController {
 	}
 	
 	@RequestMapping("/getAlien")
-	public ModelAndView getAlien(@RequestParam int aid)
-	{
+	public ModelAndView getAlien(@RequestParam String tech)
+	{	
 		ModelAndView mView = new ModelAndView("showAlien.jsp");
-		Alien alien = (Alien)repo.findById(aid).orElse(new Alien());
-		mView.addObject(alien);
-		return mView;
+		
+		List<Alien> alienList = repo.findByTech(tech);
+		System.out.println(alienList);
+		
+		alienList = repo.findByAidLessThan(103);
+		System.out.println(alienList);
+		
+		alienList = repo.findByTechSorted("Java");
+		System.out.println(alienList);
+		
+		throw new NotYetImplementedException();
 	}
 	
 	@RequestMapping("/updateAlien")
@@ -50,4 +63,6 @@ public class AlienController {
 		repo.deleteById(aid);
 		return "home.jsp";
 	}
+	
+	
 }
