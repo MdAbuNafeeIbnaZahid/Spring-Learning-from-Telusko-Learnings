@@ -1,14 +1,17 @@
 package com.telusko.demo.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.sound.midi.Soundbank;
 
 import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.telusko.demo.dao.AlienRepo;
@@ -33,21 +36,18 @@ public class AlienController {
 		return "home.jsp";
 	}
 	
-	@RequestMapping("/getAlien")
-	public ModelAndView getAlien(@RequestParam String tech)
+	@RequestMapping("/aliens")
+	@ResponseBody
+	public List<Alien> getAliens()
 	{	
-		ModelAndView mView = new ModelAndView("showAlien.jsp");
-		
-		List<Alien> alienList = repo.findByTech(tech);
-		System.out.println(alienList);
-		
-		alienList = repo.findByAidLessThan(103);
-		System.out.println(alienList);
-		
-		alienList = repo.findByTechSorted("Java");
-		System.out.println(alienList);
-		
-		throw new NotYetImplementedException();
+		return repo.findAll();
+	}
+	
+	@RequestMapping("/alien/{aid}")
+	@ResponseBody
+	public Optional<Alien> getAliens(@PathVariable("aid") int aid)
+	{	
+		return repo.findById(aid);
 	}
 	
 	@RequestMapping("/updateAlien")
