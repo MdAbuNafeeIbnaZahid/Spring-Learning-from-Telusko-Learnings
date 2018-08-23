@@ -8,16 +8,22 @@ import javax.sound.midi.Soundbank;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.telusko.demo.dao.AlienRepo;
 import com.telusko.demo.model.Alien;
 
-@Controller
+@RestController
 public class AlienController {
 	
 	@Autowired
@@ -29,22 +35,37 @@ public class AlienController {
 		return "home.jsp";
 	}
 	
-	@RequestMapping("/addAlien")
-	public String addAlien(Alien alien)
+	@DeleteMapping("alien/{aid}")
+	public String deleteAlien(@PathVariable int aid)
 	{
-		repo.save(alien);
-		return "home.jsp";
+		Alien a = repo.getOne(aid);
+		
+		repo.delete(a);
+		
+		return "deleted";
 	}
 	
-	@RequestMapping(path="/aliens", produces= {"application/xml"})
-	@ResponseBody
+	@PostMapping(path="/alien", consumes= {"application/json"})
+	public Alien addAlien(@RequestBody Alien alien)
+	{
+		repo.save(alien);
+		return alien;
+	}
+	
+	@GetMapping(path="/aliens")
 	public List<Alien> getAliens()
 	{	
 		return repo.findAll();
 	}
 	
+	@PutMapping(path="/alien", consumes= {"application/json"})
+	public Alien saveOrUpdateAlien(@RequestBody Alien alien)
+	{
+		repo.save(alien);
+		return alien;
+	}
+	
 	@RequestMapping("/alien/{aid}")
-	@ResponseBody
 	public Optional<Alien> getAliens(@PathVariable("aid") int aid)
 	{	
 		return repo.findById(aid);
@@ -55,14 +76,6 @@ public class AlienController {
 	{
 		repo.save(alien);
 		return "home.jsp";
-	}
-	
-	@RequestMapping("/deleteAlien")
-	public String deleteAlien(@RequestParam int aid)
-	{
-		repo.deleteById(aid);
-		return "home.jsp";
-	}
-	
+	}	
 	
 }
